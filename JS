@@ -1,0 +1,538 @@
+/* ====================================================
+   A. クイズ問題データベース (QUIZ DATA)
+   問題を追加したい場合は、以下の配列にオブジェクトを追記してください。
+   ==================================================== */
+const CIVICS_QUIZ_DATA = [
+  {
+    category: "早稲田・法",
+    question: "日本国憲法において「主権」は誰にあると定められているでしょう？",
+    options: [
+      "天皇",
+      "内閣総理大臣",
+      "国会",
+      "国民"
+    ],
+    answer: 3,
+    explanation: "日本国憲法の三大原則の一つである「国民主権」により、国の政治のあり方を最終的に決定する権限（主権）は国民にあるとされています。天皇は「日本国および日本国民統合の象徴」です。"
+  },
+  {
+    category: "明治大学",
+    question: "国会が持つ権限のうち、「国の唯一の立法機関」としての最も代表的な仕事は何でしょう？",
+    options: [
+      "予算を作成すること",
+      "法律を制定すること",
+      "裁判を行うこと",
+      "最高裁判所長官を指名すること"
+    ],
+    answer: 1,
+    explanation: "国会は国の唯一の立法機関であり、社会のルールである「法律の制定」を行います。なお、予算を作成するのは「内閣」の仕事（国会はその予算を審議・議決します）で、最高裁判所長官を指名するのも「内閣」の仕事です。"
+  },
+  {
+    category: "政治",
+    question: "衆議院と参議院の議決が一致しない場合に、両院の意見を調整するために開かれる会合を何というでしょう？",
+    options: [
+      "弾劾裁判所",
+      "本会議",
+      "両院協議会",
+      "内閣官房長官記者会見"
+    ],
+    answer: 2,
+    explanation: "法律案の可決や予算の議決などで衆議院と参議院の議決が異なった際、両院から10人ずつ代表を出して意見をすり合わせるために「両院協議会」が設置されます。調整がつかない場合は衆議院の議決が優先されます（衆議院の優越）。"
+  },
+  {
+    category: "憲法",
+    question: "日本国憲法第9条で明確に放棄（禁止）されているものはどれでしょう？",
+    options: [
+      "国家の交戦権および武力による威嚇・武力の行使",
+      "他国との同盟関係の構築",
+      "災害派遣などを目的とした組織の設置",
+      "自衛のための最小限度の実力の保持"
+    ],
+    answer: 0,
+    explanation: "憲法第9条では、第1項で戦争の放棄と武力による威嚇・武力の行使の放棄を定め、第2項で陸海空軍その他の戦力を持たないこと、および国家の交戦権を認めないことを定めています。"
+  },
+  {
+    category: "地方自治",
+    question: "地方自治について、国の関与をできるだけ減らし、地域住民の意思に基づいて行う仕組みを表す言葉として、正しいものはどれでしょう？",
+    options: [
+      "地方交付税交付金",
+      "団体自治",
+      "住民自治",
+      "直接請求権"
+    ],
+    answer: 2,
+    explanation: "地方自治は「住民自治」と「団体自治」の2つの側面があります。このうち、住民自身の意思と責任において地域の政治を行うことを「住民自治」と呼び、国から独立した地方公共団体が政治を行うことを「団体自治」と呼びます。"
+  },
+  {
+    category: "地方自治",
+    question: "住民が条例の制定や改廃を求める「直接請求権」を行使する際、必要な署名数はどれだけでしょう？",
+    options: [
+      "有権者の 50分の1 以上",
+      "有権者の 3分の1 以上",
+      "有権者の 6分の1 以上",
+      "有権者の 2分の1 以上"
+    ],
+    answer: 0,
+    explanation: "条例の制定・改廃（イニシアティブ）や、事務監査の請求を行うには、有権者の「50分の1以上」の署名を集めて、首長や監査委員に請求します。一方、首長や議員の解職（リコール）や議会の解散請求には「3分の1以上」の署名が必要です。"
+  },
+  {
+    category: "経済",
+    question: "「日本銀行」が行う金融政策において、景気が悪い（不況の）時に実施される適切な政策はどれでしょう？",
+    options: [
+      "世の中に出回るお金の量（通貨量）を増やす",
+      "世の中に出回るお金の量（通貨量）を減らす",
+      "日本銀行の保有する国債を一般の銀行に売却する（売りオペレーション）",
+      "金利を引き上げる"
+    ],
+    answer: 0,
+    explanation: "景気が悪い時は、世の中にお金を回して消費や投資を促す必要があります。そのため日本銀行は、一般の銀行から国債を買い取って資金を供給する「買いオペレーション」などを行い、金利を下げて世の中のお金の量を増やします。"
+  },
+  {
+    category: "国際",
+    question: "国際連合（国連）の主要機関のうち、世界の平和と安全に責任を持ち、5カ国の常任理事国と10カ国の非常任理事国で構成される機関は何でしょう？",
+    options: [
+      "国際司法裁判所",
+      "総会",
+      "事務局",
+      "安全保障理事会"
+    ],
+    answer: 3,
+    explanation: "安全保障理事会（安保理）は、国際平和と安全の維持を担当する最重要機関です。アメリカ、イギリス、フランス、ロシア、中国の5つの常任理事国は、すべての決定を拒否できる「拒否権」を持っています。"
+  }
+];
+
+/* ====================================================
+   B. クイズエンジン制御プログラム (APP LOGIC)
+   ==================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+
+    const STATE = {
+        theme: 'dark',
+        view: 'dashboardView',
+        quizMode: 'quick',
+        categoryFilter: 'all',
+        timerEnabled: true,
+        
+        questions: [],
+        currentQuestionIndex: 0,
+        selectedOptionIndex: null,
+        score: 0,
+        correctCount: 0,
+        history: [],
+
+        stats: {
+            highScore: 0,
+            attempts: 0,
+            totalCorrect: 0,
+            totalAnswered: 0
+        },
+
+        timer: {
+            id: null,
+            duration: 20000,
+            timeLeft: 20000,
+            interval: 100
+        }
+    };
+
+    initTheme();
+    loadStats();
+    renderCategoryFilters();
+    setupDashboardEvents();
+    setupQuizEvents();
+    setupKeyboardSupport();
+
+    function initTheme() {
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        STATE.theme = savedTheme;
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        themeToggleBtn.addEventListener('click', () => {
+            const nextTheme = STATE.theme === 'dark' ? 'light' : 'dark';
+            STATE.theme = nextTheme;
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            localStorage.setItem('theme', nextTheme);
+        });
+    }
+
+    function loadStats() {
+        const savedStats = localStorage.getItem('civics_quiz_stats');
+        if (savedStats) {
+            try { STATE.stats = JSON.parse(savedStats); } catch(e) {}
+        }
+        updateStatsDashboard();
+    }
+
+    function updateStatsDashboard() {
+        document.getElementById('statsHighScore').innerText = STATE.stats.highScore;
+        document.getElementById('statsAttempts').innerText = STATE.stats.attempts;
+        let accuracy = 0;
+        if (STATE.stats.totalAnswered > 0) {
+            accuracy = Math.round((STATE.stats.totalCorrect / STATE.stats.totalAnswered) * 100);
+        }
+        document.getElementById('statsAccuracy').innerText = accuracy;
+    }
+
+    function saveStats() {
+        localStorage.setItem('civics_quiz_stats', JSON.stringify(STATE.stats));
+        updateStatsDashboard();
+    }
+
+    function resetStats() {
+        if (confirm("これまでの学習記録とハイスコアをすべてリセットしますか？")) {
+            STATE.stats = { highScore: 0, attempts: 0, totalCorrect: 0, totalAnswered: 0 };
+            saveStats();
+        }
+    }
+
+    function renderCategoryFilters() {
+        const container = document.getElementById('categoryFilterContainer');
+        if (!container) return;
+
+        const categories = new Set();
+        CIVICS_QUIZ_DATA.forEach(q => {
+            if (q.category) categories.add(q.category);
+        });
+
+        const allPill = container.querySelector('[data-category="all"]');
+        container.innerHTML = '';
+        container.appendChild(allPill);
+
+        categories.forEach(cat => {
+            const pill = document.createElement('button');
+            pill.className = 'cat-pill';
+            pill.setAttribute('data-category', cat);
+            pill.innerText = cat;
+            pill.addEventListener('click', () => {
+                const pills = container.querySelectorAll('.cat-pill');
+                pills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                STATE.categoryFilter = cat;
+            });
+            container.appendChild(pill);
+        });
+
+        allPill.addEventListener('click', () => {
+            const pills = container.querySelectorAll('.cat-pill');
+            pills.forEach(p => p.classList.remove('active'));
+            allPill.classList.add('active');
+            STATE.categoryFilter = 'all';
+        });
+    }
+
+    function switchView(targetViewId) {
+        STATE.view = targetViewId;
+        const panels = document.querySelectorAll('.view-panel');
+        panels.forEach(p => {
+            if (p.id === targetViewId) p.classList.add('active-view');
+            else p.classList.remove('active-view');
+        });
+        window.scrollTo(0, 0);
+    }
+
+    function setupDashboardEvents() {
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                STATE.quizMode = btn.getAttribute('data-mode');
+            });
+        });
+
+        const timerToggle = document.getElementById('timerToggleCheckbox');
+        timerToggle.addEventListener('change', (e) => {
+            STATE.timerEnabled = e.target.checked;
+        });
+
+        document.getElementById('btnResetStats').addEventListener('click', resetStats);
+        document.getElementById('btnStartQuiz').addEventListener('click', startQuizSession);
+    }
+
+    function startQuizSession() {
+        let pool = [...CIVICS_QUIZ_DATA];
+        if (STATE.categoryFilter !== 'all') {
+            pool = pool.filter(q => q.category === STATE.categoryFilter);
+        }
+
+        if (pool.length === 0) {
+            alert(`選択された分野の問題がありません。`);
+            return;
+        }
+
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+
+        if (STATE.quizMode === 'quick') {
+            STATE.questions = pool.slice(0, 5);
+        } else {
+            STATE.questions = pool;
+        }
+
+        STATE.currentQuestionIndex = 0;
+        STATE.score = 0;
+        STATE.correctCount = 0;
+        STATE.history = [];
+
+        switchView('quizPlayView');
+        renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+        const qIndex = STATE.currentQuestionIndex;
+        const total = STATE.questions.length;
+        const q = STATE.questions[qIndex];
+        STATE.selectedOptionIndex = null;
+
+        document.getElementById('playCategoryBadge').innerText = q.category;
+        document.getElementById('playCurrentIndex').innerText = qIndex + 1;
+        document.getElementById('playTotalCount').innerText = total;
+        document.getElementById('playQuestionText').innerText = q.question;
+
+        const optionBtns = document.querySelectorAll('.play-option-btn');
+        optionBtns.forEach((btn, idx) => {
+            btn.classList.remove('correct-state', 'incorrect-state');
+            btn.querySelector('.option-content').innerText = q.options[idx];
+            btn.querySelector('.option-num').innerText = idx + 1;
+        });
+
+        if (STATE.timerEnabled) {
+            document.getElementById('timerBarContainer').classList.remove('hidden');
+            startTimer();
+        } else {
+            document.getElementById('timerBarContainer').classList.add('hidden');
+        }
+    }
+
+    function selectOption(selectedIdx) {
+        if (STATE.selectedOptionIndex !== null) return;
+        stopTimer();
+
+        STATE.selectedOptionIndex = selectedIdx;
+        const qIndex = STATE.currentQuestionIndex;
+        const q = STATE.questions[qIndex];
+        const isCorrect = selectedIdx === q.answer;
+
+        const optionBtns = document.querySelectorAll('.play-option-btn');
+        optionBtns.forEach((btn, idx) => {
+            if (idx === q.answer) btn.classList.add('correct-state');
+            else if (idx === selectedIdx && !isCorrect) btn.classList.add('incorrect-state');
+        });
+
+        if (isCorrect) {
+            STATE.correctCount++;
+            const ptsPerQuestion = Math.round(100 / STATE.questions.length);
+            STATE.score += ptsPerQuestion;
+        }
+
+        STATE.history.push({
+            questionObj: q,
+            userSelection: selectedIdx,
+            isTimeout: false,
+            isCorrect: isCorrect
+        });
+
+        setTimeout(() => { showFeedbackScreen(isCorrect, false); }, 800);
+    }
+
+    function handleTimeout() {
+        STATE.selectedOptionIndex = -1;
+        const qIndex = STATE.currentQuestionIndex;
+        const q = STATE.questions[qIndex];
+
+        const optionBtns = document.querySelectorAll('.play-option-btn');
+        optionBtns.forEach((btn, idx) => {
+            if (idx === q.answer) btn.classList.add('correct-state');
+        });
+
+        STATE.history.push({
+            questionObj: q,
+            userSelection: -1,
+            isTimeout: true,
+            isCorrect: false
+        });
+
+        setTimeout(() => { showFeedbackScreen(false, true); }, 800);
+    }
+
+    function showFeedbackScreen(isCorrect, isTimeout) {
+        switchView('quizFeedbackView');
+
+        const symbol = document.getElementById('feedbackSymbol');
+        const titleText = document.getElementById('feedbackTitleText');
+        const q = STATE.questions[STATE.currentQuestionIndex];
+
+        if (isTimeout) {
+            symbol.innerText = "⏳";
+            titleText.innerText = "時間切れ...";
+            titleText.style.color = "var(--color-timeout)";
+        } else if (isCorrect) {
+            symbol.innerText = "⭕";
+            titleText.innerText = "正解！";
+            titleText.style.color = "var(--color-correct)";
+        } else {
+            symbol.innerText = "❌";
+            titleText.innerText = "不正解...";
+            titleText.style.color = "var(--color-incorrect)";
+        }
+
+        document.getElementById('feedbackExplanationText').innerText = q.explanation;
+        
+        const nextBtn = document.getElementById('btnNextQuestion');
+        if (STATE.currentQuestionIndex === STATE.questions.length - 1) {
+            nextBtn.innerText = "結果発表へ ➔";
+        } else {
+            nextBtn.innerText = "次の問題へ ➔";
+        }
+    }
+
+    function nextQuestion() {
+        STATE.currentQuestionIndex++;
+        if (STATE.currentQuestionIndex < STATE.questions.length) {
+            switchView('quizPlayView');
+            renderCurrentQuestion();
+        } else {
+            showResultsScreen();
+        }
+    }
+
+    function showResultsScreen() {
+        switchView('quizResultView');
+        const total = STATE.questions.length;
+        const correct = STATE.correctCount;
+        const accuracy = Math.round((correct / total) * 100);
+        const finalScore = correct === total ? 100 : Math.round((correct / total) * 100);
+
+        document.getElementById('resultScore').innerText = finalScore;
+        document.getElementById('resultMaxScore').innerText = 100;
+        document.getElementById('resultAccuracy').innerText = accuracy;
+        document.getElementById('resultCorrectCount').innerText = correct;
+        document.getElementById('resultTotalQuestions').innerText = total;
+
+        let evalMsg = "";
+        if (accuracy === 100) evalMsg = "🏆 完璧です！素晴らしい！社会科マスターですね！";
+        else if (accuracy >= 80) evalMsg = "🌟 優秀です！あと一息で全問正解！非常に良く理解できています。";
+        else if (accuracy >= 60) evalMsg = "👍 合格点クリア！間違えた問題を復習して、さらに上を目指そう。";
+        else evalMsg = "📚 もう一度、解説やクイズ設定を見直して挑戦してみましょう！";
+        document.getElementById('resultEvaluationText').innerText = evalMsg;
+
+        STATE.stats.attempts++;
+        STATE.stats.totalAnswered += total;
+        STATE.stats.totalCorrect += correct;
+        if (finalScore > STATE.stats.highScore) STATE.stats.highScore = finalScore;
+        saveStats();
+    }
+
+    function renderReviewView() {
+        switchView('quizReviewView');
+        const container = document.getElementById('reviewItemsContainer');
+        container.innerHTML = '';
+
+        STATE.history.forEach((hist, idx) => {
+            const q = hist.questionObj;
+            const card = document.createElement('div');
+            card.className = 'review-card glass-panel';
+
+            let badgeClass = 'incorrect';
+            let badgeText = '不正解';
+            if (hist.isTimeout) {
+                badgeClass = 'timeout';
+                badgeText = '時間切れ';
+            } else if (hist.isCorrect) {
+                badgeClass = 'correct';
+                badgeText = '正解';
+            }
+
+            const userChoiceText = hist.userSelection >= 0 ? q.options[hist.userSelection] : "無回答（時間切れ）";
+            const correctChoiceText = q.options[q.answer];
+
+            card.innerHTML = `
+                <div class="review-header-row">
+                    <div class="review-card-meta">
+                        <span class="review-num">Q${idx + 1}</span>
+                        <span class="review-cat">${q.category}</span>
+                    </div>
+                    <span class="review-badge ${badgeClass}">${badgeText}</span>
+                </div>
+                <div class="review-question">${q.question}</div>
+                <div class="review-answers-compare">
+                    <div class="review-ans-box user-choice ${hist.isCorrect ? 'was-correct' : ''}">
+                        <span class="ans-label">あなたの回答:</span>
+                        <strong>${userChoiceText}</strong>
+                    </div>
+                    <div class="review-ans-box correct-choice">
+                        <span class="ans-label">正しい正解:</span>
+                        <strong>${correctChoiceText}</strong>
+                    </div>
+                </div>
+                <div class="review-explanation-box">
+                    <strong>💡 解説</strong>
+                    <p>${q.explanation}</p>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function startTimer() {
+        const fill = document.getElementById('timerBarFill');
+        if (!fill) return;
+
+        STATE.timer.timeLeft = STATE.timer.duration;
+        fill.style.width = '100%';
+        fill.style.backgroundColor = 'var(--color-correct)';
+
+        if (STATE.timer.id) clearInterval(STATE.timer.id);
+
+        STATE.timer.id = setInterval(() => {
+            STATE.timer.timeLeft -= STATE.timer.interval;
+            const pct = (STATE.timer.timeLeft / STATE.timer.duration) * 100;
+            fill.style.width = `${pct}%`;
+
+            if (pct < 30) fill.style.backgroundColor = 'var(--color-incorrect)';
+            else if (pct < 60) fill.style.backgroundColor = 'var(--accent)';
+
+            if (STATE.timer.timeLeft <= 0) {
+                stopTimer();
+                handleTimeout();
+            }
+        }, STATE.timer.interval);
+    }
+
+    function stopTimer() {
+        if (STATE.timer.id) {
+            clearInterval(STATE.timer.id);
+            STATE.timer.id = null;
+        }
+    }
+
+    function setupQuizEvents() {
+        const optionBtns = document.querySelectorAll('.play-option-btn');
+        optionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-index'), 10);
+                selectOption(idx);
+            });
+        });
+
+        document.getElementById('btnNextQuestion').addEventListener('click', nextQuestion);
+        document.getElementById('btnRestartQuiz').addEventListener('click', startQuizSession);
+        document.getElementById('btnGoToReview').addEventListener('click', renderReviewView);
+        document.getElementById('btnBackToDashboard').addEventListener('click', () => { switchView('dashboardView'); });
+        document.getElementById('btnReviewBackDashboard').addEventListener('click', () => { switchView('dashboardView'); });
+    }
+
+    function setupKeyboardSupport() {
+        document.addEventListener('keydown', (e) => {
+            if (STATE.view !== 'quizPlayView' || STATE.selectedOptionIndex !== null) return;
+            if (e.key === '1') selectOption(0);
+            else if (e.key === '2') selectOption(1);
+            else if (e.key === '3') selectOption(2);
+            else if (e.key === '4') selectOption(3);
+        });
+    }
+
+});
